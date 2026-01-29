@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Pierre Feuille Ciseaux</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #f2f2f2;
+        padding: 20px;
+    }
+    .btn {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    #solo, #duo {
+        display: none;
+        margin-top: 20px;
+    }
+    #countdown {
+        font-size: 40px;
+        margin: 20px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h1>Pierre – Feuille – Ciseaux</h1>
+
+<button class="btn" onclick="showSolo()">Mode Solo</button>
+<button class="btn" onclick="showDuo()">Mode Deux Joueurs</button>
+
+<!-- MODE SOLO -->
+<div id="solo">
+    <h2>Mode Solo</h2>
+    <p>Choisis :</p>
+    <button class="btn" onclick="solo('pierre')">Pierre</button>
+    <button class="btn" onclick="solo('feuille')">Feuille</button>
+    <button class="btn" onclick="solo('ciseaux')">Ciseaux</button>
+
+    <p id="resultSolo"></p>
+</div>
+
+<!-- MODE DEUX JOUEURS -->
+<div id="duo">
+    <h2>Mode Deux Joueurs (Touches simultanées)</h2>
+
+    <p>Joueur 1 : A = Pierre | Z = Feuille | E = Ciseaux</p>
+    <p>Joueur 2 : J = Pierre | K = Feuille | L = Ciseaux</p>
+
+    <button class="btn" onclick="startCountdown()">Lancer le décompte</button>
+
+    <div id="countdown"></div>
+    <div id="resultDuo"></div>
+</div>
+
+<script>
+function showSolo() {
+    document.getElementById("solo").style.display = "block";
+    document.getElementById("duo").style.display = "none";
+}
+
+function showDuo() {
+    document.getElementById("duo").style.display = "block";
+    document.getElementById("solo").style.display = "none";
+}
+
+/* MODE SOLO */
+function solo(player) {
+    const choices = ["pierre", "feuille", "ciseaux"];
+    const bot = choices[Math.floor(Math.random() * 3)];
+
+    let result = "Bot a choisi : " + bot + "<br>";
+
+    if (player === bot) result += "Égalité";
+    else if (
+        (player === "pierre" && bot === "ciseaux") ||
+        (player === "feuille" && bot === "pierre") ||
+        (player === "ciseaux" && bot === "feuille")
+    ) result += "Tu gagnes";
+    else result += "Tu perds";
+
+    document.getElementById("resultSolo").innerHTML = result;
+}
+
+/* MODE DEUX JOUEURS */
+let j1 = "";
+let j2 = "";
+let listening = false;
+
+function startCountdown() {
+    j1 = "";
+    j2 = "";
+    listening = false;
+    document.getElementById("resultDuo").innerHTML = "";
+    countdown(3);
+}
+
+function countdown(n) {
+    if (n === 0) {
+        document.getElementById("countdown").innerHTML = "GO !";
+        listening = true;
+        return;
+    }
+    document.getElementById("countdown").innerHTML = n;
+    setTimeout(() => countdown(n - 1), 1000);
+}
+
+document.addEventListener("keydown", (e) => {
+    if (!listening) return;
+
+    // Joueur 1
+    if (e.key === "a") j1 = "pierre";
+    if (e.key === "z") j1 = "feuille";
+    if (e.key === "e") j1 = "ciseaux";
+
+    // Joueur 2
+    if (e.key === "j") j2 = "pierre";
+    if (e.key === "k") j2 = "feuille";
+    if (e.key === "l") j2 = "ciseaux";
+
+    if (j1 && j2) {
+        listening = false;
+        afficherResultat();
+    }
+});
+
+function afficherResultat() {
+    let r = `Joueur 1 : ${j1}<br>Joueur 2 : ${j2}<br><br>`;
+
+    if (j1 === j2) r += "Égalité";
+    else if (
+        (j1 === "pierre" && j2 === "ciseaux") ||
+        (j1 === "feuille" && j2 === "pierre") ||
+        (j1 === "ciseaux" && j2 === "feuille")
+    ) r += "Joueur 1 gagne";
+    else r += "Joueur 2 gagne";
+
+    document.getElementById("resultDuo").innerHTML = r;
+}
+</script>
+
+</body>
+</html>
